@@ -1,0 +1,16 @@
+.color-box {
+    height: 10px;
+    width: 70px;
+    border: 1px solid #000;
+    border: var(--bs-card-border-width) solid var(--bs-card-border-color);
+    border-radius: var(--bs-card-border-radius);
+}
+
+.widget-visitor-card i, .widget-visitor-card svg {
+    font-size: 9em;
+    color: #fff;
+    width: 30%;
+    height: 65%;
+    right: -10px;
+    left: auto;
+}

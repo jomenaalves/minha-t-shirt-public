@@ -1,0 +1,42 @@
+main{
+    height: 94vh;
+}
+.order-icon{
+    font-size: 35px;
+    margin-right: 10px;
+}
+.open{
+    color: #6c757d!important;
+}
+.waiting{
+    color: #ffc107!important;
+}
+.closed{
+    color: #198754!important;
+}
+.canceled{
+    color: #dc3545!important;
+}
+.order-data{
+    line-height: 20px;
+}
+#btn_create_order{
+    position: absolute;
+    right: 15px;
+    bottom: 15px;
+    border-radius: 50%;
+    z-index: 99;
+    font-size: 35px;
+    padding-top: 3px;
+    width: 60px;
+    height: 60px;
+}
+#btn_edit_products{
+    font-size: 25px;
+    height: 35px;
+}
+#order-list li{
+    list-style: none;
+    display: flex;
+    justify-content: space-between;
+}

@@ -1,0 +1,11 @@
+.photo-user img{
+    width: 177px;
+    height: 177px;
+    object-fit: cover;
+}
+
+.list-photo {
+    width: 40px;
+    height: 40px;
+    object-fit: cover;
+}

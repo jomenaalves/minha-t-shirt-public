@@ -1,0 +1,19 @@
+.accounting-entry-large{
+    width: 80vw;
+    margin-left: -20vw;
+}
+.remove{
+    padding-top: 30px;
+}
+.vertical-line {
+    width: 2px; 
+    height: auto;
+    background-color: rgb(255, 255, 255); 
+    margin: 0 25px; 
+}
+.box-large{
+    height: 85%;
+}
+.remove-item-alert i, .remove-item-alert h4{
+    color: red;
+}
