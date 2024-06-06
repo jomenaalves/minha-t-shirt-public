@@ -24,14 +24,14 @@ const globalPage = {
         });
 
         $(document).on('change', '#order_type_person', function() {
-            if (this.checked) {
-               
+            if (this.checked) {               
                 $('.juridic-person').removeClass('d-none');
+                $('.physical-person').addClass('d-none');
                 $('#document_label ').text(' CNPJ *');
                 $('#name_label ').text(' Nome Fantasia *');
-            } else {
-                
+            } else {                
                 $('.juridic-person').addClass('d-none');
+                $('.physical-person').removeClass('d-none');
                 $('#document_label ').text(' CPF');
                 $('#name_label ').text(' Nome');
             }
@@ -50,12 +50,8 @@ const globalPage = {
         $modal.find('.modal_content').addClass('show');
     },
 
-    closeModal:()=>{
-        var $modal = $(this).closest('.modal');
-        $modal.find('.modal_content').removeClass('show');
-        setTimeout(function() {
-            $modal.removeClass('show');
-        }, 400);
+    closeModal:()=> {
+        $('#modal_template').hide(); 
     },
 
     formatCurrency: (value) => {

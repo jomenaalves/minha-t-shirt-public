@@ -108,5 +108,23 @@ a{
     font-weight: bold;
     padding: 1px 0 0 7px;
 }
+@media (min-width: 765px) {
+    .modal_content {
+        left: 8%;
+        width: 92%;
+    }
+}
+@media (min-width: 1024px) {
+    .modal_content {
+        left: 6%;
+        width: 94%;
+    }
+}
+@media (min-width: 1439px) {
+    .modal_content {
+        left: 4%;
+        width: 95%;
+    }
+}
 
 

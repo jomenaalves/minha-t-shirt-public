@@ -85,14 +85,14 @@
                 <label class="form-check-label" for="flexSwitchCheckDefault">Pessoa jurídica</label>
             </div>            
                 <div class="mb-3">
-                    <label for="document" class="form-label">CPF<span class="req-march">*</span></label>
+                    <label for="document" id="document_label" class="form-label">CPF<span class="req-march">*</span></label>
                     <input type="text" class="form-control" id="document" name="document" placeholder="000.000.000-00">
                 </div>
                 <div class="mb-3">
-                    <label for="name" class="form-label">Nome<span class="req-march">*</span></label>
+                    <label for="name" id="name_label" class="form-label">Nome<span class="req-march">*</span></label>
                     <input type="text" class="form-control" id="name" name="name" placeholder="Digite o nome">
                 </div>
-                <div class="mb-3">
+                <div class="mb-3 physical-person">
                     <label for="register" class="form-label">RG<span class="req-march">*</span></label>
                     <input type="text" class="form-control" id="register" name="register" placeholder="Digite o RG">
                 </div>
@@ -133,7 +133,7 @@
                 <input type="text" class="form-control" id="number" name="number" placeholder="Digite o número">
             </div>
             <div class="mb-3">
-                <label for="complement" class="form-label">Complemento<span class="req-march">*</span></label>
+                <label for="complement" class="form-label">Complemento</label>
                 <input type="text" class="form-control" id="complement" name="complement" placeholder="Digite o complemento">
             </div>
             <div class="mb-3">
@@ -157,13 +157,15 @@
     <div id="edit_discount_content" class="modal_dynamic_content" style="display:none;">
         <!-- Content for view order modal -->
         <form id="edit_discount">
+            <input type="hidden" id="transaction_id" name="transaction_id">
+            <input type="hidden" id="amount" name="amount">
             <div class="mb-3">
                 <label for="freight" class="form-label">Valor do frete<span class="req-march">*</span></label>
                 <input type="text" class="form-control" id="freight" name="freight" placeholder="0000,00">
             </div>
             <div class="mb-3">
                 <label for="select-type" class=form-label">Tipo do desconto</label>
-                <select class="form-select" aria-label="select-type">
+                <select class="form-select" aria-label="select-type" id="payment_type" name="payment-type">
                     <option selected hidden>Selecione o tipo de desconto</option>
                     <option value="fixed">Fixo</option>
                     <option value="percentage">Percentual</option>
@@ -180,14 +182,10 @@
     </div>
     
     <div id="edit_products_content" class="modal_dynamic_content" style="display:none;">
-        <form id="edit_discount">
+        <form id="edit_products">
             <div class="mt-3 mb-3">
                 <label for="select-type" class=form-label">Produto<span class="req-march">*</span></label>
-                <select class="form-select" aria-label="select-type">
-                    <option selected hidden>Selecione o produto</option>
-                    <option value="fixed">Fixo</option>
-                    <option value="percentage">Percentual</option>
-                  </select>
+                <select class="form-select" id="select_products" aria-label="select-type" name="product_id"></select>
             </div>
             <div class="mb-3">
                 <label for="price" class="form-label">Preço<span class="req-march">*</span></label>

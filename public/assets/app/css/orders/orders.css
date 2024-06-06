@@ -21,7 +21,7 @@ main{
     line-height: 20px;
 }
 #btn_create_order{
-    position: absolute;
+    position: fixed;
     right: 15px;
     bottom: 15px;
     border-radius: 50%;

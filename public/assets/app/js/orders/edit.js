@@ -3,7 +3,9 @@ const editOrdersPage = {
         editOrdersPage.setListener();
         editOrdersPage.detailsOrder();
         editOrdersPage.updateClient();
-
+        editOrdersPage.updateAddress();
+        editOrdersPage.updateDiscount();
+        editOrdersPage.updateProduct();
     },
 
     setListener: () => {
@@ -11,8 +13,25 @@ const editOrdersPage = {
         id = url.match(/\d+$/)[0];
 
         $('#btn_edit_order').click(function() {
+            $('#modal_template').show(); 
+            editOrdersPage. detailsOrder()            
+        })
+       
+        $('#btn_edit_address').click(function() {
+            $('#modal_template').show(); 
             editOrdersPage. detailsOrder()
-        });
+        })     
+      
+        $('#btn_edit_discount').click(function() {
+            $('#modal_template').show(); 
+            editOrdersPage. detailsOrder()
+        })     
+        
+        $('#btn_edit_products').click(function() {
+            $('#modal_template').show(); 
+            editOrdersPage. detailsOrder()
+            editOrdersPage. optionsProducts()
+        })     
 
         $('#generatePaymentLink').on('click', function() {
             $.ajax({
@@ -73,29 +92,62 @@ const editOrdersPage = {
                 $('#register').val(globalPage.maskRG(data.client_register))
                 $('#phone').val(globalPage.maskPhone(data.client_phone))
                 $('#email').val(data.client_email)
+                $('#corporate-reason').val(data.client_corporate_reason)
+                $('#state-registration').val(data.client_state_registration)
 
                 $('.client-address').empty();
                 let htmlAddress = `
-                CEP: ${globalPage.maskCEP(data.client_cep)}<br>
-                ${data.client_address}, ${data.client_number}<br>
+                ${data.client_cep ? `CEP: ${globalPage.maskCEP(data.client_cep)}<br>` : ''}
+                ${data.client_address ? `${data.client_address},` : ''} ${data.client_number ? `${data.client_number}<br>` : ''}
                 ${data.client_complement ? `${data.client_complement}<br>` : ''}
-                ${data.client_neighborhood}<br>
-                ${data.client_city} - ${data.client_state}<br>
+                ${data.client_neighborhood ? `${data.client_neighborhood}<br>` : ''}
+                ${data.client_city ? `${data.client_city} -` : ''}  ${data.client_state ? `${data.client_state}<br>` : ''}
                 `;
                 $('.client-address').append(htmlAddress);
 
+                $('#cep').val(globalPage.maskCEP(data.client_cep))
+                $('#address').val(data.client_address)
+                $('#number').val(data.client_number)
+                $('#complement').val(data.client_complement)
+                $('#neighborhood').val(data.client_neighborhood)
+                $('#city').val(data.client_city)
+                $('#state').val(data.client_state)
+
                 let total_value = editOrdersPage.calculateTotal(data.order_products)
-                const [statusText, statusClass, statusColor] = editOrdersPage.getStatusLabel(data.order_status);
+                const [statusText, statusClass] = editOrdersPage.getStatusLabel(data.order_status);
+
+                let totalOrder = 0
+                let discount = 0
+                if (data?.order_transaction?.payment_method) {
+                    editOrdersPage.selectPaymentMethod(data.order_transaction.payment_method)  
+                    if (data.order_transaction.payment_method == 'percentage') {
+                        let totalDiscount = (total_value + parseFloat(data.order_transaction.total_freight)) * (parseFloat(data.order_transaction.discount) / 100)
+                        totalOrder = (total_value + parseFloat(data.order_transaction.total_freight)) - totalDiscount
+
+                        discount = parseFloat(data.order_transaction?.discount)+'%'
+
+                    } else {
+                        totalOrder = (total_value + parseFloat(data.order_transaction.total_freight)) - parseFloat(data.order_transaction.discount) 
+
+                        discount = globalPage.formatCurrency(data.order_transaction.discount)
+                    }                    
+                }
 
                 $('.order-items').empty();
                 let htmlTotalItems = `
                     Total dos produtos: ${globalPage.formatCurrency(total_value)}<br>
-                    Total do frete: <span class="freight"></span> <br>
-                    Total do desconto: <span class="discount"></span><br>
-                    Total do pedido: <span class="total-order"></span><br>
+                    Total do frete: ${globalPage.formatCurrency(data.order_transaction?.total_freight ?? 0.00)} <br>
+                    Total do desconto:  ${discount}<br>
+                    Total do pedido: ${globalPage.formatCurrency(totalOrder ?? 0.00)}<br>
                     Status:  <span class="badge ${statusClass}">${statusText}</span>
                 `;
                 $('.order-items').append(htmlTotalItems);
+
+                $('#transaction_id').val(data.order_transaction?.id)   
+                $('#amount').val(total_value)   
+                $('#freight').val(data.order_transaction?.total_freight)   
+                $('#discount_value').val(editOrdersPage.formatDiscountValue(discount)) 
+                
 
                 editOrdersPage.listItemsProducts(data)
 
@@ -110,6 +162,21 @@ const editOrdersPage = {
         });       
     }, 
 
+    selectPaymentMethod:(paymentMethod) => {
+        var selectElement = document.getElementById('payment_type');
+        selectElement.value = paymentMethod;
+    },
+
+    formatDiscountValue: (value) => {
+        if (typeof value !== 'string') {
+            value = String(value);
+        }
+        value = value.replace(/[^0-9,\.]/g, '');
+        value = value.replace(',', '.');
+        let formattedValue = parseFloat(value);
+        return formattedValue;
+    },
+
     getStatusLabel: (status) => {
         switch (status) {
             case 0:
@@ -123,19 +190,32 @@ const editOrdersPage = {
         }
     },   
   
-    optionsProducts: (products) => {
-        
-        let $select = $('#put_products');
+    optionsProducts: () => {
+              
+        $.ajax({
+            url: route('app.order.allProducts'),
+            type: "POST",
+            success: function (res) {
+                let $select = $('#select_products');
 
-        $select.empty();
-        $select.append('<option selected disabled value="">Selecione um produto</option>');
+                $select.empty();
+                $select.append('<option selected disabled value="">Selecione um produto</option>');
 
-        $.each(products, function(index, product) {
-            var option = $('<option></option>')
-                .attr('value', product.id)
-                .text(product.name);
-            $select.append(option);
-        });
+                $.each(res, function(index, product) {
+                    var option = $('<option></option>')
+                        .attr('value', product.id)
+                        .text(product.name);
+                    $select.append(option);
+                });
+            },
+            error: (res) => {
+                if(res.status === 422) {
+                    toastr.error('Não foi possível carregar todos os produtos', 'Erro');
+                    return;
+                }
+                toastr.error('Erro ao carregar os produtos.', 'Erro');
+            }
+        });             
     },
        
     calculateTotal:(produtos) => {
@@ -150,13 +230,13 @@ const editOrdersPage = {
 
     listItemsProducts:(orders)=>{
         $('#order-list').empty();
-        orders.order_products.forEach(function(order) {          
+        orders.order_products.forEach(function(order) {        
             let productName = order.product.name;
             let price = globalPage.formatCurrency(order.price);
             let quantity = order.quantity;
             let total = quantity * order.price;
             let listItem = document.createElement('li');
-            listItem.innerHTML ='<div class="mb-2">'+ productName + ' (x' + quantity + ')<br>' + '<small>Unit: ' + price + ' / Total: '+ globalPage.formatCurrency(total) + '</small></div><i class="bx bx-trash me-3"></i>';
+            listItem.innerHTML ='<div class="mb-2">'+ productName + ' (x' + quantity + ')<br>' + '<small>Unit: ' + price + ' / Total: '+ globalPage.formatCurrency(total) + '</small></div><i class="bx bx-trash me-3" onclick="editOrdersPage.deleteProduct('+order.id+')"></i>';
             document.getElementById('order-list').appendChild(listItem);           
         });
     },
@@ -189,6 +269,119 @@ const editOrdersPage = {
                 }
             });
         })
+    },
+    
+    updateAddress: () => {
+        $(document).on('submit', '#edit_address', function (e) {
+            e.preventDefault();
+         
+            let formData = new FormData(this); 
+            formData.append('id', id); 
+      
+            $.ajax({
+                url: route('app.order.updateAddress'),
+                type: "POST",
+                data: formData,
+                processData: false,
+                contentType: false,
+                success: function (res) {
+                    globalPage.closeModal()
+                    editOrdersPage.detailsOrder()
+                    toastr.success('Pedido alterado com sucesso', 'Sucesso');
+                },
+                error: (res) => {
+                    if(res.status === 422) {
+                        toastr.error('Não foi possível alterar o pedido!', 'Erro');
+                        return;
+                    }
+                    toastr.error('Erro ao alterar o pedido.', 'Erro');
+                }
+            });
+        })
+    },
+    
+    updateDiscount: () => {
+        $(document).on('submit', '#edit_discount', function (e) {
+            e.preventDefault();
+         
+            let formData = new FormData(this); 
+            formData.append('id', id); 
+      
+            $.ajax({
+                url: route('app.order.updateDiscount'),
+                type: "POST",
+                data: formData,
+                processData: false,
+                contentType: false,
+                success: function (res) {
+                    globalPage.closeModal()
+                    editOrdersPage.detailsOrder()
+                    toastr.success('Pedido alterado com sucesso', 'Sucesso');
+                },
+                error: (res) => {
+                    if(res.status === 422) {
+                        toastr.error('Não foi possível alterar o pedido!', 'Erro');
+                        return;
+                    }
+                    toastr.error('Erro ao alterar o pedido.', 'Erro');
+                }
+            });
+        })
+    },
+
+    updateProduct: () => {
+        $(document).on('submit', '#edit_products', function (e) {
+            e.preventDefault();
+         
+            let formData = new FormData(this); 
+            formData.append('id', id); 
+      
+            $.ajax({
+                url: route('app.order.updateProducts'),
+                type: "POST",
+                data: formData,
+                processData: false,
+                contentType: false,
+                success: function (res) {
+                    globalPage.closeModal()
+                    editOrdersPage.detailsOrder()
+                    toastr.success('Pedido alterado com sucesso', 'Sucesso');
+                },
+                error: (res) => {
+                    if(res.status === 422) {
+                        toastr.error('Não foi possível alterar o pedido!', 'Erro');
+                        return;
+                    }
+                    toastr.error('Erro ao alterar o pedido.', 'Erro');
+                }
+            });
+        })
+    },
+
+    deleteProduct: (id) => {
+               
+        let formData = new FormData(); 
+        formData.append('id', id); 
+    
+        $.ajax({
+            url: route('app.order.deleteProduct'),
+            type: "POST",
+            data: formData,
+            processData: false,
+            contentType: false,
+            success: function (res) {
+                globalPage.closeModal()
+                editOrdersPage.detailsOrder()
+                toastr.success('Produto deletado com sucesso', 'Sucesso');
+            },
+            error: (res) => {
+                if(res.status === 422) {
+                    toastr.error('Não foi possível deletar o produto', 'Erro');
+                    return;
+                }
+                toastr.error('Erro ao deletar o produto.', 'Erro');
+            }
+        });        
     },
 
 };

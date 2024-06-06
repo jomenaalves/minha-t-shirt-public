@@ -13,7 +13,7 @@
                         <i class="ti ti-dashboard"></i>
                     </li>
                     <li class="pc-item active">
-                        <a href="" class="pc-link">
+                        <a href="{{ route('dashboard') }}" class="pc-link">
                             <span class="pc-micon">
                                 <i class="ti ti-dashboard"></i>
                             </span>

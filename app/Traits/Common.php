@@ -30,6 +30,11 @@ trait Common
         return str_replace(",", ".", str_replace(".", "", $val));
     }
 
+    public function sanitizeMoneyToDatabase($value) {
+        $formattedValue = str_replace(',', '.', $value);
+        return $formattedValue;
+    }
+
     public function sanitizeZipcode($zipcode)
     {
         return str_replace(['.', '-', '_', ' '], '', $zipcode);

@@ -8,8 +8,12 @@ class DashboardController extends Controller
 {
     public function dashboard(){
         $output = [
-            'styles' => [],
-            'scripts' => [],
+            'styles' => [
+                '/assets/css/dashboard/dashboard.css',
+            ],
+            'scripts' => [
+                '/assets/js/dashboard/dashboard.js',
+            ],
         ];
         
         return view('dashboard', $output);        

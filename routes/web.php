@@ -32,7 +32,7 @@ Route::domain(config('app.url'))->group(function () {
     Route::post('/auth/login', [LoginController::class, 'auth'])->name('auth.login');
     
     Route::middleware('auth')->group(function () {
-        Route::get('/', [DashboardController::class, 'dashboard']);
+        Route::get('/', [DashboardController::class, 'dashboard'])->name('dashboard');
     
         //USERS
         Route::get('/usuarios', [UserController::class, 'index'])->name('user.index');
@@ -119,6 +119,11 @@ Route::domain('app.'.config('app.domain'))->name('app.')->group(function () {
         Route::post('/new-order', [AppOrderController::class, 'newOrder'])->name('order.newOrder');
         Route::post('/pedidos/details', [AppOrderController::class, 'detailsOrder'])->name('order.detailsOrder');
         Route::post('/pedidos/update-client', [AppOrderController::class, 'updateClient'])->name('order.updateClient');
+        Route::post('/pedidos/update-address', [AppOrderController::class, 'updateAddress'])->name('order.updateAddress');
+        Route::post('/pedidos/update-discount', [AppOrderController::class, 'updateDiscount'])->name('order.updateDiscount');
+        Route::post('/pedidos/all-products', [AppOrderController::class, 'allProducts'])->name('order.allProducts');
+        Route::post('/pedidos/update-products', [AppOrderController::class, 'updateProducts'])->name('order.updateProducts');
+        Route::post('/pedidos/delete', [AppOrderController::class, 'deleteProduct'])->name('order.deleteProduct');
         
         // Assas
         Route::post('/generatePaymentLink', [AsaasController::class, 'getPaymentLink'])->name('order.generatePaymentLink');

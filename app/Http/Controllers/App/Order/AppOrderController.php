@@ -4,6 +4,9 @@ namespace App\Http\Controllers\App\Order;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Order\StoreOrderRequest;
+use App\Http\Requests\Order\UpdateAddressRequest;
+use App\Http\Requests\Order\UpdateDiscountRequest;
+use App\Http\Requests\Order\UpdateProductsRequest;
 use App\Models\Transactions;
 use App\Services\Orders\OrderService;
 use Illuminate\Http\Request;
@@ -56,4 +59,25 @@ class AppOrderController extends Controller
     public function updateClient(StoreOrderRequest $request, OrderService $orderService){
         return $orderService->updateClient($request->all());
     }
+  
+    public function updateAddress(UpdateAddressRequest $request, OrderService $orderService){
+        return $orderService->updateAddress($request->all());
+    }
+   
+    public function updateDiscount(UpdateDiscountRequest $request, OrderService $orderService){
+        return $orderService->updateDiscount($request->all());
+    }
+    
+    public function updateProducts(UpdateProductsRequest $request, OrderService $orderService){
+        return $orderService->updateProducts($request->all());
+    }
+
+    public function allProducts(OrderService $orderService){
+        return $orderService->allProducts();
+    }
+  
+    public function deleteProduct(Request $request, OrderService $orderService){
+        return $orderService->deleteProduct($request->all());
+    }
+    
 }
