@@ -1,0 +1,5 @@
+RewriteEngine on
+RewriteCond %{HTTP_HOST} ^facilvenda.boltout.dev$ [NC,OR]
+RewriteCond %{HTTP_HOST} ^www.facilvenda.boltout.dev$ [NC,OR]
+RewriteCond %{REQUEST_URI} !public/
+RewriteRule (.*) public/$1 [L]
